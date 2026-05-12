@@ -465,8 +465,8 @@ async function _init() {
 
       // Copy data
       await db.run(`
-        INSERT INTO swap_entrees
-        SELECT id, week_id, user_id, meal_name, recipe_id, notes, status, created_at, updated_at
+        INSERT INTO swap_entrees (id, week_id, user_id, entree_name, recipe_id, notes, status, created_at, updated_at)
+        SELECT id, week_id, user_id, meal_name, recipe_id, notes, status, datetime('now'), updated_at
         FROM swap_meals_backup
       `);
 
