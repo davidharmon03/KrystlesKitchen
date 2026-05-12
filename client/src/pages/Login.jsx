@@ -95,25 +95,6 @@ export default function Login() {
             </Link>
           </p>
 
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <p className="text-xs text-slate-400 text-center mb-2">Demo accounts</p>
-            <div className="space-y-1">
-              {[
-                ['krystle@example.com', 'Krystle'],
-                ['marcus@example.com', 'Marcus'],
-                ['dana@example.com', 'Dana'],
-              ].map(([email, name]) => (
-                <button
-                  key={email}
-                  type="button"
-                  onClick={() => setForm({ email, password: 'password123' })}
-                  className="w-full text-left px-3 py-1.5 rounded text-xs text-slate-500 hover:bg-slate-50 transition-colors"
-                >
-                  <span className="font-medium text-moss-700">{name}</span> — {email}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>
