@@ -175,6 +175,10 @@ export default function Layout() {
           </div>
         </Link>
       </div>
+
+      <div className="px-4 pb-3 text-center">
+        <p className="text-[10px] text-slate-300">Krystle's Cottage v1.0.0</p>
+      </div>
     </>
   )
 
@@ -189,7 +193,7 @@ export default function Layout() {
               <span className="text-white font-serif font-bold text-lg leading-none">{fn[0]?.toUpperCase()}</span>
             </div>
             <div>
-              <p className="font-serif font-semibold text-ink text-sm leading-tight">{fn}'s Hub</p>
+              <p className="font-serif font-semibold text-ink text-sm leading-tight">{fn}'s Cottage</p>
             </div>
           </div>
         </div>
@@ -211,7 +215,7 @@ export default function Layout() {
                 <div className="w-8 h-8 rounded-full bg-moss-500 flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-serif font-bold text-sm leading-none">{fn[0]?.toUpperCase()}</span>
                 </div>
-                <p className="font-serif font-semibold text-ink text-sm">{fn}'s Hub</p>
+                <p className="font-serif font-semibold text-ink text-sm">{fn}'s Cottage</p>
               </div>
               <button
                 onClick={closeDrawer}
@@ -245,7 +249,7 @@ export default function Layout() {
             <div className="w-7 h-7 rounded-full bg-moss-500 flex items-center justify-center flex-shrink-0">
               <span className="text-white font-serif font-bold text-sm">K</span>
             </div>
-            <span className="font-serif font-semibold text-ink text-sm">{fn}'s Hub</span>
+            <span className="font-serif font-semibold text-ink text-sm">{fn}'s Cottage</span>
           </div>
 
           <div className="flex-1" />
