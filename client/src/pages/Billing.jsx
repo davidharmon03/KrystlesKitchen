@@ -128,7 +128,7 @@ export default function Billing() {
           {!isPro ? (
             <div className="card mb-6">
               <h2 className="font-serif font-semibold text-ink mb-1">Upgrade to Pro</h2>
-              <p className="text-sm text-slate-500 mb-4">Unlock the full Krystle's Hub experience.</p>
+              <p className="text-sm text-slate-500 mb-4">Unlock the full Krystle's Cottage experience.</p>
 
               <ul className="space-y-2 mb-6">
                 {PRO_FEATURES.map(f => (
