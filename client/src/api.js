@@ -18,7 +18,7 @@ const processQueue = (error, token = null) => {
 }
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
 })
 
 // Request interceptor — attach access token
@@ -58,7 +58,7 @@ api.interceptors.response.use(
     isRefreshing = true
 
     try {
-      const res = await axios.post('/api/auth/refresh', { refreshToken })
+      const res = await axios.post((import.meta.env.VITE_API_URL || '/api') + '/auth/refresh', { refreshToken })
       const newToken = res.data.token
       localStorage.setItem('kbh_token', newToken)
       processQueue(null, newToken)
