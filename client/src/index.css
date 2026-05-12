@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream text-ink font-sans;
+  }
+
+  h1, h2, h3 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-moss-500 hover:bg-moss-600 text-white font-medium px-4 py-3 sm:py-2 rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-terra {
+    @apply bg-terra-500 hover:bg-terra-600 text-white font-medium px-4 py-3 sm:py-2 rounded-lg transition-colors duration-150;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent hover:bg-moss-50 text-moss-700 font-medium px-4 py-3 sm:py-2 rounded-lg border border-moss-200 transition-colors duration-150;
+  }
+
+  .btn-danger {
+    @apply bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-3 sm:py-2 rounded-lg transition-colors duration-150;
+  }
+
+  .input {
+    @apply w-full px-3 py-3 sm:py-2 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-moss-400 focus:border-transparent text-ink placeholder-slate-400 text-sm;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-slate-200 p-5;
+  }
+
+  .tag {
+    @apply inline-block px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .tag-moss {
+    @apply tag bg-moss-100 text-moss-700;
+  }
+
+  .tag-terra {
+    @apply tag bg-terra-100 text-terra-700;
+  }
+
+  .tag-slate {
+    @apply tag bg-slate-100 text-slate-600;
+  }
+
+  .section-header {
+    @apply flex items-center justify-between mb-5;
+  }
+
+  .page-title {
+    @apply text-2xl font-serif text-ink font-semibold;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-slate-700 mb-1;
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black bg-opacity-40 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4;
+  }
+
+  .modal {
+    @apply bg-white w-full overflow-y-auto rounded-t-2xl sm:rounded-2xl sm:shadow-xl sm:max-w-lg;
+    max-height: 92dvh;
+  }
+
+  @media (min-width: 640px) {
+    .modal {
+      max-height: 90vh;
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f5f0e8; }
+::-webkit-scrollbar-thumb { background: #95bda5; border-radius: 3px; }
+
+/* Print styles */
+@media print {
+  /* Hide everything that shouldn't print */
+  .no-print { display: none !important; }
+
+  /* Reset layout for printing */
+  body {
+    background: white !important;
+    color: #1a1a1a !important;
+    font-size: 12pt;
+  }
+
+  /* Hide sidebar, header, nav */
+  aside,
+  header,
+  nav {
+    display: none !important;
+  }
+
+  /* Full-width main content */
+  .flex-1.flex.flex-col {
+    width: 100% !important;
+  }
+
+  /* Labels: parchment card format */
+  .print-label {
+    width: 4in;
+    height: 5in;
+    border: 1px solid #ccc;
+    padding: 0.5in;
+    font-family: 'Lora', Georgia, serif;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Recipe print view: clean card */
+  .print-recipe {
+    max-width: 6in;
+    margin: 0 auto;
+    padding: 0;
+    page-break-inside: avoid;
+  }
+
+  .print-recipe h1 {
+    font-size: 20pt;
+    margin-bottom: 6pt;
+  }
+
+  .print-recipe h2,
+  .print-recipe h3 {
+    font-size: 13pt;
+    margin-top: 12pt;
+    margin-bottom: 4pt;
+    border-bottom: 0.5pt solid #ccc;
+    padding-bottom: 2pt;
+  }
+
+  .print-recipe ul,
+  .print-recipe ol {
+    margin-left: 16pt;
+    margin-bottom: 8pt;
+  }
+
+  .print-recipe li {
+    margin-bottom: 3pt;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Shopping list: clean column layout */
+  .print-shopping {
+    max-width: 7in;
+    margin: 0 auto;
+  }
+
+  .print-shopping .section-header-row {
+    font-weight: bold;
+    font-size: 11pt;
+    border-bottom: 0.5pt solid #ccc;
+    margin-top: 8pt;
+    margin-bottom: 4pt;
+    padding-bottom: 2pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .print-shopping .list-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6pt;
+    margin-bottom: 3pt;
+    font-size: 11pt;
+  }
+
+  .print-shopping .list-item .check-box {
+    width: 10pt;
+    height: 10pt;
+    border: 0.75pt solid #555;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+
+  /* Avoid orphaned headers */
+  .print-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,29 @@
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# ── Environment variables (NEVER commit these) ────────────────
+.env
+.env.local
+.env.production
+server/.env
+
+# ── SQLite database ───────────────────────────────────────────
+server/data.db
+server/data.db-shm
+server/data.db-wal
+
+# ── Uploaded files (user data — not source code) ──────────────
+server/uploads/
+
+# ── Build output ──────────────────────────────────────────────
+client/dist/
+client/.vite/
+
+# ── OS & editor junk ──────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
