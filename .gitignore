@@ -24,6 +24,12 @@ client/.vite/
 # ── OS & editor junk ──────────────────────────────────────────
 .DS_Store
 Thumbs.db
+desktop.ini
 *.log
+npm-debug.log*
 .vscode/
 .idea/
+
+# ── PWA generated files (built at deploy time) ────────────────
+client/public/sw.js
+client/public/workbox-*.js
