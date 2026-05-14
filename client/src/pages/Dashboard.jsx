@@ -8,6 +8,13 @@ import {
 } from 'lucide-react'
 import SocialLinks from '../components/SocialLinks'
 
+function getGreeting() {
+  const h = new Date().getHours()
+  if (h < 12) return 'morning'
+  if (h < 17) return 'afternoon'
+  return 'evening'
+}
+
 function relativeTime(iso) {
   if (!iso) return null
   const diff = Date.now() - new Date(iso).getTime()
@@ -369,11 +376,4 @@ export default function Dashboard() {
       )}
     </div>
   )
-}
-
-function getGreeting() {
-  const h = new Date().getHours()
-  if (h < 12) return 'morning'
-  if (h < 17) return 'afternoon'
-  return 'evening'
 }
