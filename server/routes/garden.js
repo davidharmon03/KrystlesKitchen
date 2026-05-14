@@ -146,18 +146,32 @@ router.post('/:groupId/harvests', authMiddleware, async (req, res) => {
 });
 
 // GET /:groupId/calendar
+// Returns garden plants grouped by expected-harvest month, e.g.:
+//   { "May 2026": [{plant_name, status, expected_harvest}, ...], ... }
 router.get('/:groupId/calendar', authMiddleware, async (req, res) => {
   try {
     if (!await requireMember(req.params.groupId, req.user.id))
       return res.status(403).json({ error: 'Not a group member' });
     const db = await getDb();
     const rows = await db.all(`
-      SELECT c.*, u.name AS added_by_name
-      FROM seasonal_calendar c JOIN users u ON u.id = c.added_by
-      WHERE c.group_id = ?
-      ORDER BY c.start_date
+      SELECT plant_name, expected_harvest, status
+      FROM garden_plants
+      WHERE group_id = ?
+        AND expected_harvest IS NOT NULL
+        AND expected_harvest != ''
+      ORDER BY expected_harvest ASC
     `, [req.params.groupId]);
-    res.json(rows);
+
+    // Group into { "Month Year": [plants] }
+    const calendar = {};
+    for (const row of rows) {
+      const d = new Date(row.expected_harvest);
+      if (isNaN(d.getTime())) continue;
+      const key = d.toLocaleString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+      if (!calendar[key]) calendar[key] = [];
+      calendar[key].push(row);
+    }
+    res.json(calendar);
   } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
