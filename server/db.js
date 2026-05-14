@@ -718,10 +718,17 @@ async function _init() {
     } catch {}
   }
 
-  await _seed(db);
-  await _seedSuperadmin(db);
-  await _seedProducts(db);
-  await _seedPlantGuides(db);
+  try {
+    await db.run('PRAGMA foreign_keys = OFF');
+    await _seed(db);
+    await _seedSuperadmin(db);
+    await _seedProducts(db);
+    await _seedPlantGuides(db);
+  } catch (e) {
+    console.warn('[db] Seed warning (non-fatal):', e.message);
+  } finally {
+    await db.run('PRAGMA foreign_keys = ON');
+  }
   return db;
 }
 
