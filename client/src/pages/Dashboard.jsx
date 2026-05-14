@@ -6,6 +6,7 @@ import {
   ChefHat, DollarSign, Package, Leaf, Tag,
   Users, Plus, ArrowRight, Copy, Check, AlertTriangle, ShieldCheck, User
 } from 'lucide-react'
+import SocialLinks from '../components/SocialLinks'
 
 function relativeTime(iso) {
   if (!iso) return null
@@ -26,10 +27,9 @@ function syncDotColor(iso) {
   if (days < 3)  return 'bg-amber-400'
   return 'bg-red-400'
 }
-import SocialLinks from '../components/SocialLinks'
 
 export default function Dashboard() {
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
   const channels = [
     {
       to: '/kitchen', label: 'Kitchen', sub: 'Recipes & How-Tos',
@@ -64,7 +64,6 @@ export default function Dashboard() {
   const [joinCode, setJoinCode] = useState('')
   const [joinError, setJoinError] = useState('')
   const [joinLoading, setJoinLoading] = useState(false)
-  const { refreshUser } = useAuth()
 
   const activeGroup = user?.groups?.[0]
 
