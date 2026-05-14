@@ -4,7 +4,9 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 
-const DB_PATH = path.join(__dirname, 'data.db');
+const DB_PATH = process.env.NODE_ENV === 'production'
+  ? '/data/data.db'
+  : path.join(__dirname, 'data.db');
 let _dbPromise = null;
 
 async function getDb() {

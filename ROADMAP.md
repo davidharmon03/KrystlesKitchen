@@ -855,6 +855,23 @@ Everything a single user needs to manage their own kitchen and garden:
 
 Tracked ideas from feature implementation docs. Not prioritized — pick up when relevant backlog items are done.
 
+### Simplify Channel Nav Labels
+- [ ] Remove the personalized first name prefix from sidebar nav links — `{fn}'s Kitchen` → `Kitchen`, `{fn}'s Corner` → `Corner`, `{fn}'s Cuisine` → `Cuisine`, `{fn}'s Garden` → `Garden`
+- [ ] The user's name in the upper-left of the sidebar is enough personalization
+- [ ] Update `Layout.jsx` channels array — remove `${fn}` from all labels
+- [ ] Check page headers inside each page (Kitchen.jsx, Korner.jsx, etc.) and simplify those too if they repeat the name
+
+### Responsive Layout Polish — Device-Specific Optimization
+- [ ] **Audit current layouts on real devices** — test on S24+, Galaxy Z Fold, Samsung Tab S6, and desktop/widescreen; document what scrolls unnecessarily or looks cramped
+- [ ] **S24+ / tall phone** — single column, larger tap targets, bottom-anchored action buttons, reduce card padding so more content fits without scrolling
+- [ ] **Galaxy Z Fold (folded)** — treat as narrow phone; unfolded (tablet mode) gets two-column layout with sidebar always visible
+- [ ] **Samsung Tab S6 / tablet landscape** — two or three column grid for dashboard, sidebar always visible, modals wider, recipe cards in a grid not a list
+- [ ] **Desktop / widescreen** — three-column layouts where appropriate (sidebar + content + detail panel), wider modals, more data visible without scrolling
+- [ ] **Use Tailwind breakpoints consistently** — `sm` (640px), `md` (768px), `lg` (1024px), `xl` (1280px); audit every page for missing responsive classes
+- [ ] **Test foldable viewport change** — Galaxy Z Fold fires a resize event when unfolded; app should reflow without a full reload
+- [ ] **Kitchen/recipe modal** — on tablet+, show recipe detail as a side panel instead of a full-screen modal
+- [ ] **Dashboard** — on tablet+, show group members and stats in a multi-column grid instead of stacked cards
+
 ### SMS / Twilio Integration
 - [ ] **Add phone number field to user profiles** — optional, stored on `users` table; shown in Profile settings with a "Verify" button
 - [ ] **Twilio account setup** — sign up at twilio.com, get a phone number (~$1/mo), note `ACCOUNT_SID`, `AUTH_TOKEN`, `FROM_NUMBER` env vars
