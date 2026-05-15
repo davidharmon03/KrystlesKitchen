@@ -36,7 +36,7 @@ function syncDotColor(iso) {
 }
 
 export default function Dashboard() {
-  const { user, refreshUser } = useAuth()
+  const { user } = useAuth()
   const channels = [
     {
       to: '/kitchen', label: 'Kitchen', sub: 'Recipes & How-Tos',
@@ -67,10 +67,6 @@ export default function Dashboard() {
   const [recentRecipes, setRecentRecipes] = useState([])
   const [groupMembers,  setGroupMembers]  = useState([])
   const [copiedCode, setCopiedCode] = useState(false)
-  const [showJoinModal, setShowJoinModal] = useState(false)
-  const [joinCode, setJoinCode] = useState('')
-  const [joinError, setJoinError] = useState('')
-  const [joinLoading, setJoinLoading] = useState(false)
 
   const activeGroup = user?.groups?.[0]
 
@@ -91,22 +87,6 @@ export default function Dashboard() {
       setCopiedCode(true)
       setTimeout(() => setCopiedCode(false), 2000)
     })
-  }
-
-  const handleJoin = async e => {
-    e.preventDefault()
-    setJoinError('')
-    setJoinLoading(true)
-    try {
-      await api.post('/groups/join', { invite_code: joinCode })
-      await refreshUser()
-      setShowJoinModal(false)
-      setJoinCode('')
-    } catch (err) {
-      setJoinError(err.response?.data?.error || 'Failed to join')
-    } finally {
-      setJoinLoading(false)
-    }
   }
 
   return (
@@ -190,16 +170,10 @@ export default function Dashboard() {
           {!activeGroup && (
             <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
               <button
-                onClick={() => setShowJoinModal(true)}
-                className="btn-ghost text-sm flex-1 sm:flex-none"
-              >
-                Enter code
-              </button>
-              <button
-                onClick={() => navigate('/create-group')}
+                onClick={() => navigate('/welcome')}
                 className="btn-terra text-sm flex items-center gap-1.5 flex-1 sm:flex-none justify-center"
               >
-                <Users size={15} /> Create or Join
+                <Users size={15} /> Join or Create
               </button>
             </div>
           )}
@@ -214,11 +188,8 @@ export default function Dashboard() {
             <p className="text-terra-700 text-sm mt-0.5">Create or join a group of up to 5 to unlock the Corner, Cuisine, and Garden channels.</p>
           </div>
           <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
-            <button onClick={() => setShowJoinModal(true)} className="btn-ghost border-terra-300 text-terra-700 text-sm flex items-center gap-1.5 flex-1 sm:flex-none justify-center">
-              Enter code
-            </button>
-            <button onClick={() => navigate('/create-group')} className="btn-terra flex items-center gap-2 flex-1 sm:flex-none justify-center">
-              <Users size={16} /> Create group
+            <button onClick={() => navigate('/welcome')} className="btn-terra flex items-center gap-2 flex-1 sm:flex-none justify-center">
+              <Users size={16} /> Join or Create
             </button>
           </div>
         </div>
@@ -341,39 +312,6 @@ export default function Dashboard() {
         <Link to="/labels" className="btn-terra text-sm flex-shrink-0">Open</Link>
       </div>
 
-      {/* Join by code modal */}
-      {showJoinModal && (
-        <div className="modal-backdrop" onClick={() => setShowJoinModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <div className="p-6 border-b border-slate-100">
-              <h2 className="text-lg font-serif font-semibold text-ink">Join a group</h2>
-            </div>
-            <div className="p-6">
-              <p className="text-sm text-slate-500 mb-4">Enter the 6-character invite code shared by your group owner.</p>
-              {joinError && <p className="text-red-600 text-sm mb-3">{joinError}</p>}
-              <form onSubmit={handleJoin} className="space-y-4">
-                <div>
-                  <label className="label">Invite code</label>
-                  <input
-                    className="input font-mono uppercase tracking-widest text-center text-lg"
-                    required placeholder="KREW2024"
-                    value={joinCode}
-                    onChange={e => setJoinCode(e.target.value.toUpperCase())}
-                    maxLength={8}
-                    autoFocus
-                  />
-                </div>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button type="button" onClick={() => setShowJoinModal(false)} className="btn-ghost flex-1">Cancel</button>
-                  <button type="submit" disabled={joinLoading} className="btn-primary flex-1">
-                    {joinLoading ? '…' : 'Join Group'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

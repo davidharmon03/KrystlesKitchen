@@ -25,6 +25,7 @@ import Suggestions from './pages/Suggestions'
 import Orders from './pages/Orders'
 import Chat from './pages/Chat'
 import Billing from './pages/Billing'
+import Welcome from './pages/Welcome'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminUsers from './pages/admin/AdminUsers'
@@ -98,6 +99,7 @@ export default function App() {
           <Route path="/login"            element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/register"         element={<PublicRoute><Register /></PublicRoute>} />
           <Route path="/forgot-password"  element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+          <Route path="/welcome"          element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
           <Route path="/reset-password"   element={<ResetPassword />} />
           <Route path="/accept-invite"    element={<AcceptInvite />} />
           {/* Admin routes */}

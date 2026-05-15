@@ -41,7 +41,9 @@ export default function Register() {
       localStorage.setItem('kbh_user', JSON.stringify(res.data.user))
       // Re-fetch with groups via login flow
       await login(form.email, form.password)
-      navigate('/')
+      // Invite-token registrations land on dashboard (already joined a group).
+      // Fresh signups land on /welcome to join or create a group.
+      navigate(inviteToken ? '/' : '/welcome')
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed')
     } finally {
