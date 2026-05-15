@@ -39,6 +39,7 @@ Full-stack group kitchen app (React + Node/Express + SQLite) deployed on Render.
 - 🔲 **Data Export** — ZIP download of user/group data (recipes, inventory, spending, photos)
 - 🔲 **Print-Friendly Views** — @media print stylesheets for shopping lists and recipe cards
 - 🔲 **Cross-device Responsive Testing** — PC, Android, iPhone, Galaxy Z Fold, iPad, Mac
+- 🔲 Onboarding Process Cleanup — new user flow needs polish (group join/create after registration, account status clarity)
 
 ---
 

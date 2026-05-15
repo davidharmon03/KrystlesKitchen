@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import api from '../../api'
 import { useTwoFactor } from '../../hooks/useTwoFactor'
-import { Search, ChevronDown, ChevronUp, Trash2, ShieldCheck } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp, Trash2, ShieldCheck, Pencil, Check, X } from 'lucide-react'
+
+const roleBadge = (role) => {
+  if (role === 'superadmin') return <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-100 text-red-700 whitespace-nowrap">SUPERADMIN</span>
+  if (role === 'admin')      return <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-moss-100 text-moss-700">ADMIN</span>
+  return <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-500">MEMBER</span>
+}
 
 const planBadge = (plan) => plan === 'pro'
   ? <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-moss-100 text-moss-700">PRO</span>
@@ -10,14 +16,17 @@ const planBadge = (plan) => plan === 'pro'
 
 export default function AdminUsers() {
   const [searchParams] = useSearchParams()
-  const [users, setUsers]       = useState([])
-  const [total, setTotal]       = useState(0)
-  const [search, setSearch]     = useState('')
-  const [plan, setPlan]         = useState(searchParams.get('plan') || 'all')
-  const [page, setPage]         = useState(1)
-  const [loading, setLoading]   = useState(true)
-  const [expanded, setExpanded] = useState(null)
-  const [detail, setDetail]     = useState({})
+  const [users, setUsers]           = useState([])
+  const [total, setTotal]           = useState(0)
+  const [search, setSearch]         = useState('')
+  const [plan, setPlan]             = useState(searchParams.get('plan') || 'all')
+  const [page, setPage]             = useState(1)
+  const [loading, setLoading]       = useState(true)
+  const [expanded, setExpanded]     = useState(null)
+  const [detail, setDetail]         = useState({})
+  const [editingRole, setEditingRole] = useState(null)   // userId being edited
+  const [roleValue, setRoleValue]   = useState('')
+  const [roleSaving, setRoleSaving] = useState(false)
   const { getToken } = useTwoFactor()
   const LIMIT = 50
 
@@ -43,6 +52,29 @@ export default function AdminUsers() {
     }
   }
 
+  const startEditRole = (userId, currentRole) => {
+    setEditingRole(userId)
+    setRoleValue(currentRole)
+  }
+
+  const cancelEditRole = () => {
+    setEditingRole(null)
+    setRoleValue('')
+  }
+
+  const saveRole = async (userId) => {
+    setRoleSaving(true)
+    try {
+      await api.patch(`/admin/users/${userId}/role`, { role: roleValue }, { headers: twoFaHeaders() })
+      setUsers(u => u.map(x => x.id === userId ? { ...x, role: roleValue } : x))
+      setEditingRole(null)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setRoleSaving(false)
+    }
+  }
+
   const changePlan = async (userId, newPlan) => {
     await api.put(`/admin/users/${userId}/plan`, { plan: newPlan }, { headers: twoFaHeaders() })
     setUsers(u => u.map(x => x.id === userId ? { ...x, plan: newPlan } : x))
@@ -61,7 +93,10 @@ export default function AdminUsers() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-serif font-semibold text-ink">Users <span className="text-slate-400 text-base font-sans font-normal">({total})</span></h1>
+        <h1 className="text-xl font-serif font-semibold text-ink">
+          Users{' '}
+          <span className="text-slate-400 text-base font-sans font-normal">{total} total</span>
+        </h1>
       </div>
 
       {/* Filters */}
@@ -98,8 +133,9 @@ export default function AdminUsers() {
               <tr>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Name</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Email</th>
-                <th className="text-left px-4 py-3 font-semibold text-slate-600">Plan</th>
+                <th className="text-left px-4 py-3 font-semibold text-slate-600">Role</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Group</th>
+                <th className="text-left px-4 py-3 font-semibold text-slate-600">Group Role</th>
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Joined</th>
                 <th className="px-4 py-3" />
               </tr>
@@ -108,14 +144,58 @@ export default function AdminUsers() {
               {users.map(u => (
                 <>
                   <tr key={u.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-ink">{u.name}</td>
+                    <td className="px-4 py-3 font-medium text-ink">
+                      {u.name}
+                      {u.must_change_password ? (
+                        <span className="ml-1.5 px-1.5 py-0.5 rounded text-[9px] font-semibold bg-amber-100 text-amber-700">TEMP PW</span>
+                      ) : null}
+                    </td>
                     <td className="px-4 py-3 text-slate-500">{u.email}</td>
-                    <td className="px-4 py-3">{planBadge(u.plan)}</td>
+                    <td className="px-4 py-3">
+                      {editingRole === u.id ? (
+                        <div className="flex items-center gap-1">
+                          <select
+                            className="text-xs border border-slate-200 rounded-md px-1.5 py-1 focus:outline-none focus:ring-2 focus:ring-moss-300 bg-white"
+                            value={roleValue}
+                            onChange={e => setRoleValue(e.target.value)}
+                            autoFocus
+                          >
+                            <option value="member">member</option>
+                            <option value="admin">admin</option>
+                            <option value="superadmin">superadmin</option>
+                          </select>
+                          <button
+                            onClick={() => saveRole(u.id)}
+                            disabled={roleSaving}
+                            className="p-1 text-moss-600 hover:text-moss-800 disabled:opacity-40"
+                          >
+                            <Check size={14} />
+                          </button>
+                          <button onClick={cancelEditRole} className="p-1 text-slate-400 hover:text-slate-600">
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5">
+                          {roleBadge(u.role)}
+                          <button
+                            onClick={() => startEditRole(u.id, u.role)}
+                            className="p-0.5 text-slate-300 hover:text-slate-500 transition-colors"
+                            title="Edit role"
+                          >
+                            <Pencil size={11} />
+                          </button>
+                        </div>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-slate-500">
                       {u.group_name
-                        ? <span className="text-moss-700 font-medium">{u.group_name} <span className="text-slate-400 font-normal">({u.member_count} members)</span></span>
+                        ? <span className="text-moss-700 font-medium">{u.group_name}</span>
                         : <span className="text-slate-300">—</span>
                       }
+                    </td>
+                    <td className="px-4 py-3 text-slate-400 text-xs capitalize">
+                      {u.group_role ?? <span className="text-slate-300">—</span>}
                     </td>
                     <td className="px-4 py-3 text-slate-400 text-xs">
                       {new Date(u.created_at).toLocaleDateString()}
@@ -133,7 +213,7 @@ export default function AdminUsers() {
                   {/* Expanded detail row */}
                   {expanded === u.id && (
                     <tr key={`${u.id}-detail`}>
-                      <td colSpan={6} className="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                      <td colSpan={7} className="bg-slate-50 px-6 py-4 border-b border-slate-200">
                         {!detail[u.id] ? (
                           <p className="text-xs text-slate-400">Loading...</p>
                         ) : (

@@ -54,13 +54,18 @@ router.get('/users', async (req, res) => {
     const users = await db.all(`
       SELECT
         u.id, u.name, u.email, u.plan, u.role, u.created_at,
+        u.must_change_password,
         u.stripe_customer_id,
-        g.id   AS group_id,
-        g.name AS group_name,
-        g.invite_code,
-        (SELECT COUNT(*) FROM group_members gm WHERE gm.group_id = g.id) AS member_count
+        COALESCE(
+          (SELECT g.name FROM groups g WHERE g.owner_id = u.id LIMIT 1),
+          (SELECT g.name FROM groups g JOIN group_members gm ON g.id = gm.group_id WHERE gm.user_id = u.id AND g.owner_id != u.id LIMIT 1)
+        ) AS group_name,
+        CASE
+          WHEN (SELECT 1 FROM groups WHERE owner_id = u.id LIMIT 1) IS NOT NULL THEN 'owner'
+          WHEN (SELECT 1 FROM group_members WHERE user_id = u.id LIMIT 1) IS NOT NULL THEN 'member'
+          ELSE NULL
+        END AS group_role
       FROM users u
-      LEFT JOIN groups g ON g.owner_id = u.id
       ${where}
       ORDER BY u.created_at DESC
       LIMIT ? OFFSET ?
@@ -138,14 +143,32 @@ router.put('/users/:id/plan', async (req, res) => {
   }
 });
 
-// PUT /api/admin/users/:id/role — change user role
+// PUT /api/admin/users/:id/role — change user role (legacy)
 router.put('/users/:id/role', async (req, res) => {
   try {
     const db = await getDb();
     const { role } = req.body;
-    if (!['member', 'superadmin'].includes(role)) {
+    if (!['member', 'admin', 'superadmin'].includes(role)) {
       return res.status(400).json({ error: 'Invalid role' });
     }
+    await db.run("UPDATE users SET role = ? WHERE id = ?", [role, req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update role' });
+  }
+});
+
+// PATCH /api/admin/users/:id/role — change user role
+router.patch('/users/:id/role', async (req, res) => {
+  try {
+    const db = await getDb();
+    const { role } = req.body;
+    if (!['member', 'admin', 'superadmin'].includes(role)) {
+      return res.status(400).json({ error: 'Invalid role' });
+    }
+    const user = await db.get("SELECT role FROM users WHERE id = ?", [req.params.id]);
+    if (!user) return res.status(404).json({ error: 'User not found' });
     await db.run("UPDATE users SET role = ? WHERE id = ?", [role, req.params.id]);
     res.json({ success: true });
   } catch (err) {
